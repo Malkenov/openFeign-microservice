@@ -1,0 +1,10 @@
+version: '3'
+services:
+  postgres:
+    image: postgres:16
+    container_name: employee_db
+    restart: always
+    environment:
+      POSTGRES_DB: employee_db
+      POSTGRES_PASSWORD: postgres
+    ports: ["5433:5432"]
