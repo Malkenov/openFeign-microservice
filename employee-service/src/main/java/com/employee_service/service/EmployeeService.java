@@ -5,6 +5,7 @@ import com.employee_service.dto.DepartmentDto;
 import com.employee_service.dto.EmployeeDto;
 import com.employee_service.dto.EmployeeWithDepartmentDto;
 import com.employee_service.entity.EmployeeEntity;
+import com.employee_service.repository.DepartmentClient;
 import com.employee_service.repository.EmployeeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,7 +17,7 @@ import java.util.List;
 public class EmployeeService {
 
     private final EmployeeRepository employeeRepository;
-    private final  DepartmentClient departmentClient;
+    private final DepartmentClient departmentClient;
 
     public List<EmployeeDto> getAll() {
         return employeeRepository.findAll()
