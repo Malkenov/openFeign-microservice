@@ -1,4 +1,4 @@
-package com.employee_service.repository;
+package com.employee_service.client;
 
 
 import com.employee_service.dto.DepartmentDto;

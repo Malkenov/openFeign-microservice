@@ -5,7 +5,8 @@ import com.employee_service.dto.DepartmentDto;
 import com.employee_service.dto.EmployeeDto;
 import com.employee_service.dto.EmployeeWithDepartmentDto;
 import com.employee_service.entity.EmployeeEntity;
-import com.employee_service.repository.DepartmentClient;
+import com.employee_service.client.DepartmentClient;
+import com.employee_service.mapper.EmployeeMapper;
 import com.employee_service.repository.EmployeeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,24 +19,26 @@ public class EmployeeService {
 
     private final EmployeeRepository employeeRepository;
     private final DepartmentClient departmentClient;
+    private final EmployeeMapper employeeMapper;
 
-    public List<EmployeeDto> getAll() {
-        return employeeRepository.findAll()
-                .stream()
-                .map(this::toDto)
+
+    public List<EmployeeDto> getAll(){
+         return employeeRepository.findAll()
+                 .stream()
+                .map(employeeMapper::toDto) // <- было this::toDto
                 .toList();
-    }
+}
 
     public EmployeeDto getById(Long id) {
         return employeeRepository.findById(id)
-                .map(this::toDto)
+                .map(employeeMapper::toDto)
                 .orElseThrow(() -> new RuntimeException("Сотрудник с id " + id + " не найден"));
     }
 
     public List<EmployeeDto> getByDepartment(String departmentCode) {
         return employeeRepository.findAllByDepartmentCode(departmentCode)
                 .stream()
-                .map(this::toDto)
+                .map(employeeMapper::toDto)
                 .toList();
     }
 
@@ -43,8 +46,8 @@ public class EmployeeService {
         if (employeeRepository.existsByEmail(dto.getEmail())) {
             throw new RuntimeException("Сотрудник с email " + dto.getEmail() + " уже существует");
         }
-        EmployeeEntity saved = employeeRepository.save(toEntity(dto));
-        return toDto(saved);
+        EmployeeEntity saved = employeeRepository.save(employeeMapper.toEntity(dto));  // было toEntity(dto)
+        return employeeMapper.toDto(saved);
     }
 
     public EmployeeDto update(Long id, EmployeeDto dto) {
@@ -56,7 +59,7 @@ public class EmployeeService {
         existing.setEmail(dto.getEmail());
         existing.setDepartmentCode(dto.getDepartmentCode());
 
-        return toDto(employeeRepository.save(existing));
+        return employeeMapper.toDto(employeeRepository.save(existing));  // было toDto(...)
     }
 
     public void delete(Long id) {
@@ -94,12 +97,6 @@ public class EmployeeService {
         // Feign сам делает HTTP запрос
         DepartmentDto department = departmentClient.getByCode(employee.getDepartmentCode());
 
-        return EmployeeWithDepartmentDto.builder()
-                .id(employee.getId())
-                .firstName(employee.getFirstName())
-                .lastName(employee.getLastName())
-                .email(employee.getEmail())
-                .department(department)
-                .build();
+        return employeeMapper.toWithDepartmentDto(employee, department);
     }
 }
