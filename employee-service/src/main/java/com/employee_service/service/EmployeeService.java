@@ -69,27 +69,6 @@ public class EmployeeService {
         employeeRepository.deleteById(id);
     }
 
-    //Маппинг
-
-    private EmployeeDto toDto(EmployeeEntity entity) {
-        return EmployeeDto.builder()
-                .id(entity.getId())
-                .firstName(entity.getFirstName())
-                .lastName(entity.getLastName())
-                .email(entity.getEmail())
-                .departmentCode(entity.getDepartmentCode())
-                .build();
-    }
-
-    private EmployeeEntity toEntity(EmployeeDto dto) {
-        return EmployeeEntity.builder()
-                .firstName(dto.getFirstName())
-                .lastName(dto.getLastName())
-                .email(dto.getEmail())
-                .departmentCode(dto.getDepartmentCode())
-                .build();
-    }
-
     public EmployeeWithDepartmentDto getWithDepartment(Long id) {
         EmployeeEntity employee = employeeRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Сотрудник с id " + id + " не найден"));
